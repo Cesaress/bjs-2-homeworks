@@ -15,27 +15,36 @@ function solveEquation(a, b, c) {
     s1 = (-b + Math.sqrt(d)) / (2 * a);
     s2 = (-b - Math.sqrt(d)) / (2 * a);
     arr = [s1, s2];
-  } else {
-    arr = ["корней нет"];
-  }
+  } 
 
   return arr;
 }
 
 function calculateTotalMortgage(percent, contribution, amount, date) {
 
-  let S = amount - contribution;
+  if (isNaN(percent)) {
+    return (`Параметр "Процентная ставка" содержит неправильное значение "${percent}"`);
+  }
+  
+  if (isNaN(contribution)) {
+    return (`Параметр "Начальный взнос" содержит неправильное значение "${contribution}"`);
+  }
 
-  let D = new Date();
+  if (isNaN(amount)) {
+    return (`Параметр "Общая стоимость" содержит неправильное значение "${amount}"`);
+  }
 
-  let n = Number((date.getMonth() - D.getMonth()) + (12 * (date.getFullYear() - D.getFullYear())));
+  let sumMortgage = amount - contribution;
 
-  let P = percent / 100 / 12;
-  // P = Number(P.toFixed(3)); 0.008 - мало, 0.0083 - много, оставил как есть.
+  let nowDate = new Date();
 
-  let M = S * (P + (P / (((1 + P)^n) - 1))); // выдаёт результат в 10 раз меньше нужного, причину не определил
+  let monthAmount = Number((date.getMonth() - nowDate.getMonth()) + (12 * (date.getFullYear() - nowDate.getFullYear())));
 
-  let totalAmount = (M * 10) * n;
+  let monthlyPercent = percent / 100 / 12;
+
+  let monthlyPayment = sumMortgage * (monthlyPercent + (monthlyPercent / (((1 + monthlyPercent)**monthAmount) - 1))); 
+
+  let totalAmount = monthlyPayment * monthAmount;
   totalAmount = Number(totalAmount.toFixed(2));
 
   return totalAmount;
